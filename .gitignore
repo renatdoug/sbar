@@ -1,0 +1,25 @@
+# Ambiente Python
+venv/
+__pycache__/
+*.pyc
+
+# Banco de dados SQLite
+*.sqlite3
+
+# Arquivos do Django
+staticfiles/
+media/
+
+# Bolt.new ou aplicações Node.js (se aplicável)
+node_modules/
+*.log
+*.local
+
+# Docker
+.env
+*.pid
+*.sock
+
+# IDEs
+.vscode/
+.idea/
