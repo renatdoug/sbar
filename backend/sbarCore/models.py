@@ -75,7 +75,7 @@ class AvaliacaoFisica(models.Model):
 class Plantao(models.Model):
     data = models.DateField()
     turno = models.CharField(max_length=20)  # exemplo: "Manhã", "Tarde", "Noite"
-    enfermeiro_responsavel = models.CharField(max_length=100)
+    enfermeiro_responsavel = models.CharField(max_length=100, default="Desconhecido")
 
     def __str__(self):
         return f"{self.data} - {self.turno}"
