@@ -1,20 +1,26 @@
 from django.db import models
 
-class Paciente(models.Model):
-    nome = models.CharField(max_length=100)
-    data_nascimento = models.DateField(null=True, blank=True)
-    nome_mae = models.CharField(max_length=100, null=True, blank=True)
-    leito = models.CharField(max_length=10)
-    data_admissao = models.DateTimeField()
-    data_alta = models.DateTimeField(null=True, blank=True)
-    ativo = models.BooleanField(default=True)
+class Patient(models.Model):
+    name = models.CharField("Nome", max_length=100)
+    birth_date = models.DateField("Data de nascimento", null=True, blank=True)
+    mother_name = models.CharField("Nome da mãe", max_length=100, null=True, blank=True)
+    bed_number = models.CharField("Leito", max_length=10)
+    admission_date = models.DateTimeField("Data de admissão")
+    discharge_date = models.DateTimeField("Data de alta", null=True, blank=True)
+    is_active = models.BooleanField("Ativo", default=True)
+    diagnosis = models.TextField("Diagnóstico", null=True, blank=True)
+    status = models.CharField("Status", max_length=20, choices=[
+        ('critical', 'Critical'),
+        ('stable', 'Stable'),
+        ('recovering', 'Recovering')
+    ], default='stable')
 
     def __str__(self):
-        return f"{self.nome} - Leito {self.leito}"
+        return f"{self.name} - Bed {self.bed_number}"
 
 
-class Dispositivo(models.Model):
-    TIPO_CHOICES = [
+class Device(models.Model):
+    DEVICE_TYPE_CHOICES = [
         ('CVC', 'Cateter Venoso Central'),
         ('SNE', 'Sonda Nasoenteral'),
         ('SOG', 'Sonda Orogástrica'),
@@ -28,30 +34,37 @@ class Dispositivo(models.Model):
         
         # adicionar outros conforme necessário
     ]
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='dispositivos')
-    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
-    data_insercao = models.DateTimeField()
-    data_retirada = models.DateTimeField(null=True, blank=True)
-    local_insercao = models.CharField(max_length=100, null=True, blank=True)
-    observacoes = models.TextField(null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='devices')
+    type = models.CharField(max_length=10, choices=DEVICE_TYPE_CHOICES)
+    insertion_date = models.DateTimeField()
+    removal_date = models.DateTimeField(null=True, blank=True)
+    insertion_site = models.CharField(max_length=100, null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.get_tipo_display()} - {self.paciente.nome}"
+        return f"{self.get_type_display()} - {self.patient.name}"
 
+    class Meta:
+        verbose_name = "Dispositivo"
+        verbose_name_plural = "Dispositivos"
 
-class Medicacao(models.Model):
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='medicacoes')
-    nome = models.CharField(max_length=100)
+class Medication(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medications')
+    name = models.CharField(max_length=100)
     dose = models.CharField(max_length=50)
-    via = models.CharField(max_length=50)
-    horario = models.TimeField()
+    route = models.CharField(max_length=50)
+    time = models.TimeField()
 
     def __str__(self):
-        return f"{self.nome} - {self.paciente.nome}"
+        return f"{self.name} - {self.patient.name}"
+
+    class Meta:
+        verbose_name = "Medicação"
+        verbose_name_plural = "Medicações"
 
 
-class AvaliacaoFisica(models.Model):
-    SISTEMA_CHOICES = [
+class PhysicalAssessment(models.Model):
+    SYSTEM_CHOICES = [
         ('Aparência Geral', 'Aparência Geral'),
         ('Cabeça_Pescoço', 'Cabeça_Pescoço'),
         ('Neurológico', 'Neurológico'),
@@ -61,34 +74,45 @@ class AvaliacaoFisica(models.Model):
         ('Urinário', 'Urinário'),
         ('Musculoesquelético', 'Musculoesquelético'),
         ('Tegumentar', 'Tegumentar'),
-        # expandir conforme necessário
     ]
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='avaliacoes')
-    sistema = models.CharField(max_length=50, choices=SISTEMA_CHOICES)
-    achados = models.TextField()
-    data = models.DateField(auto_now_add=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='assessments')
+    system = models.CharField(max_length=50, choices=SYSTEM_CHOICES)
+    findings = models.TextField()
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.sistema} - {self.paciente.nome}"
+        return f"{self.system} - {self.patient.name}"
+
+    class Meta:
+        verbose_name = "Avaliação Física"
+        verbose_name_plural = "Avaliações Físicas"
 
 
-class Plantao(models.Model):
-    data = models.DateField()
-    turno = models.CharField(max_length=20)  # exemplo: "Manhã", "Tarde", "Noite"
-    enfermeiro_responsavel = models.CharField(max_length=100, default="Desconhecido")
+class Shift(models.Model):
+    date = models.DateField()
+    shift_period = models.CharField(max_length=20)  # e.g., "Morning", "Afternoon", "Night"
+    nurse_in_charge = models.CharField(max_length=100, default="Unknown")
 
     def __str__(self):
-        return f"{self.data} - {self.turno}"
+        return f"{self.date} - {self.shift_period}"
+
+    class Meta:
+        verbose_name = "Plantão"
+        verbose_name_plural = "Plantoes"
 
 
 class SBAR(models.Model):
-    paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, related_name='sbar')
-    plantao = models.ForeignKey(Plantao, on_delete=models.CASCADE, related_name='sbars')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='sbar_records')
+    shift = models.ForeignKey(Shift, on_delete=models.CASCADE, related_name='sbar_records')
     situation = models.TextField()
     background = models.TextField()
     assessment = models.TextField()
     recommendation = models.TextField()
-    criado_em = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"SBAR - {self.paciente.nome} ({self.plantao})"
+        return f"SBAR - {self.patient.name} ({self.shift})"
+
+    class Meta:
+        verbose_name = "Registro SBAR"
+        verbose_name_plural = "Registros SBAR"

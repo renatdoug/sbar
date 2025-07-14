@@ -1,29 +1,35 @@
 from rest_framework import viewsets
-from .models import Paciente, Dispositivo, Medicacao, AvaliacaoFisica, Plantao, SBAR
+from .models import Patient, Device, Medication, PhysicalAssessment, Shift, SBAR
 from .serializers import (
-    PacienteSerializer, DispositivoSerializer, MedicacaoSerializer,
-    AvaliacaoFisicaSerializer, PlantaoSerializer, SBARSerializer
+    PatientSerializer, DeviceSerializer, MedicationSerializer,
+    PhysicalAssessmentSerializer, ShiftSerializer, SBARSerializer
 )
 
-class PacienteViewSet(viewsets.ModelViewSet):
-    queryset = Paciente.objects.all()
-    serializer_class = PacienteSerializer
 
-class DispositivoViewSet(viewsets.ModelViewSet):
-    queryset = Dispositivo.objects.all()
-    serializer_class = DispositivoSerializer
+class PatientViewSet(viewsets.ModelViewSet):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
 
-class MedicacaoViewSet(viewsets.ModelViewSet):
-    queryset = Medicacao.objects.all()
-    serializer_class = MedicacaoSerializer
 
-class AvaliacaoFisicaViewSet(viewsets.ModelViewSet):
-    queryset = AvaliacaoFisica.objects.all()
-    serializer_class = AvaliacaoFisicaSerializer
+class DeviceViewSet(viewsets.ModelViewSet):
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
 
-class PlantaoViewSet(viewsets.ModelViewSet):
-    queryset = Plantao.objects.all()
-    serializer_class = PlantaoSerializer
+
+class MedicationViewSet(viewsets.ModelViewSet):
+    queryset = Medication.objects.all()
+    serializer_class = MedicationSerializer
+
+
+class PhysicalAssessmentViewSet(viewsets.ModelViewSet):
+    queryset = PhysicalAssessment.objects.all()
+    serializer_class = PhysicalAssessmentSerializer
+
+
+class ShiftViewSet(viewsets.ModelViewSet):
+    queryset = Shift.objects.all()
+    serializer_class = ShiftSerializer
+
 
 class SBARViewSet(viewsets.ModelViewSet):
     queryset = SBAR.objects.all()

@@ -1,34 +1,36 @@
+# backend/sbarCore/serializers.py
+
 from rest_framework import serializers
-from .models import Paciente, Dispositivo, Medicacao, AvaliacaoFisica, Plantao, SBAR
+from .models import Patient, Device, Medication, PhysicalAssessment, Shift, SBAR
 
 
-class PacienteSerializer(serializers.ModelSerializer):
+class PatientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Paciente
+        model = Patient
         fields = '__all__'
 
 
-class DispositivoSerializer(serializers.ModelSerializer):
+class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Dispositivo
+        model = Device
         fields = '__all__'
 
 
-class MedicacaoSerializer(serializers.ModelSerializer):
+class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Medicacao
+        model = Medication
         fields = '__all__'
 
 
-class AvaliacaoFisicaSerializer(serializers.ModelSerializer):
+class PhysicalAssessmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AvaliacaoFisica
+        model = PhysicalAssessment
         fields = '__all__'
 
 
-class PlantaoSerializer(serializers.ModelSerializer):
+class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Plantao
+        model = Shift
         fields = '__all__'
 
 

@@ -20,5 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Aqui adicionamos o endpoint da API
-    path('api/', include('sbarCore.urls')),
+    path('api/', include('sbarCore.urls')),  # Essa linha adiciona as rotas da API
 ]
